@@ -57,4 +57,30 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
-app.delete
+app.delete('/api/notes/:id', (req, res) => {
+    console.info(`${req.method} request received to delete note`);
+    notesSaved = fs.readFileSync("./db/db.json", "utf-8");
+    notesSaved = JSON.parse(notesSaved);
+    for(let i = 0; i < notesSaved.lenght; i++) {
+        if (notesSaved[i].id == req.params.id) {
+            console.log('Removed Note');
+             notesSaved.splice(i, 1);
+        }
+    }
+    console.log(notesSaved);
+    notesSaved = JSON.stringify(notesSaved);
+    fs.writeFile("./db/db.json", notesSaved, "utf-8", (err) =>
+    err
+        ? console.error(err)
+        : console.log(`Note Deleted`)
+    );
+    res.json(notesSaved);
+});
+
+app.get('/*', (req, res) =>
+    res.status(404).sendFile(path.join(__dirname, '/public/index.html'))
+);
+
+app.listen(PORT, () =>
+    console.log(`App listening at http://localhost:${PORT}`)
+);
